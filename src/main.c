@@ -1,7 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include <string.h>
 
-#define init_size 1024
+#define INIT_SIZE 1024
+#define TOKENS_SEPERATORS " " 
 
 // a function that return the command
 // a comand is a sequence of words and each word will be treated as a token
@@ -20,8 +22,8 @@ int main(){
 }
 
 char* get_command(){
-    int buffer_size = init_size;
-    int buffer_index = 0;
+    int buffer_size = INIT_SIZE;
+    int courent_buffer_index = 0;
     char* buffer = malloc(sizeof(char) * buffer_size);
     char courent_charachter;
 
@@ -33,15 +35,15 @@ char* get_command(){
     while (1) {
         courent_charachter= getchar();
         if (courent_charachter == EOF || courent_charachter == '\n') {
-            buffer[buffer_index] = '\0';
+            buffer[courent_buffer_index] = '\0';
             // exiting
             return buffer;
         }else {
-            buffer[buffer_index] = courent_charachter;
+            buffer[courent_buffer_index] = courent_charachter;
         }
-        buffer_index++;
-        if (buffer_index >= buffer_size) {
-            buffer_size += init_size;
+        courent_buffer_index++;
+        if (courent_buffer_index >= buffer_size) {
+            buffer_size += INIT_SIZE;
             buffer = realloc(buffer, buffer_size);
             if (!buffer) {
                 printf("buffer reallocation error");
@@ -49,4 +51,39 @@ char* get_command(){
             }
         }
     }
+}
+
+char** split_command_to_tokens(char* command){
+    // we know that a comand is a sequence of words/tokens that is seperated by spaces
+    int buffer_size = INIT_SIZE;
+    int courent_buffer_index = 0;
+    char** tokens_buffer = malloc(buffer_size * sizeof(char*));
+    
+
+    if(!tokens_buffer){
+        printf("tokens buffer initialisation error");
+        exit(EXIT_FAILURE);
+    }
+
+    char* courent_token = strtok(command, TOKENS_SEPERATORS);
+    while (courent_token != NULL) {
+        tokens_buffer[courent_buffer_index] = courent_token;
+        courent_buffer_index++;
+
+        if(courent_buffer_index >= buffer_size){
+            buffer_size += INIT_SIZE;
+            tokens_buffer = realloc(tokens_buffer, buffer_size);
+        }
+
+        if (!tokens_buffer) {
+            printf("tokens buffer reallocation error");
+            exit(EXIT_FAILURE);
+        }
+
+        courent_token = strtok(NULL, TOKENS_SEPERATORS);
+    }
+
+    tokens_buffer[courent_buffer_index] = NULL;
+
+    return tokens_buffer;
 }
