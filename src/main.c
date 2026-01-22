@@ -1,6 +1,10 @@
+#include <bits/types/stack_t.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include <string.h>
+#include<string.h>
+#include <sys/types.h>
+#include<unistd.h>
+#include<sys/wait.h>
 
 #define INIT_SIZE 1024
 #define TOKENS_SEPERATORS " " 
@@ -86,4 +90,27 @@ char** split_command_to_tokens(char* command){
     tokens_buffer[courent_buffer_index] = NULL;
 
     return tokens_buffer;
+}
+
+int dash_exit(){
+    return 0;
+}
+
+int dash_execute(char** tokens){
+    int status;
+    pid_t cpid;
+    if(strcmp(tokens[0], "exit") == 0){
+        return dash_exit();
+    }
+    cpid = fork();
+    if(cpid == 0){
+        if(execvp(tokens[0], tokens) < 0)
+            printf("command not found");
+        exit(EXIT_FAILURE);
+    }else if (cpid < 0) {
+        printf("forking error");
+    }else {
+        waitpid(cpid,&status,WUNTRACED);
+    }
+    return 1;
 }
