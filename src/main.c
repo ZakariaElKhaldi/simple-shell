@@ -12,16 +12,27 @@
 // a function that return the command
 // a comand is a sequence of words and each word will be treated as a token
 char* get_command();
-
 // return a double pointer to a token buffer
 char** split_command_to_tokens(char* command);
-
 int dash_exit();
-
 // check the tokens and execute the command
 int dash_execute(char** tokens);
 
 int main(){
+    char* command;
+    char** parced_command;
+    int status = 1;
+    while (status) {
+        printf("\nsimple shell\n>");
+        // command = get_command();
+        // parced_command = split_command_to_tokens(command);
+        // status = dash_execute(parced_command);
+        status = dash_execute(
+                    split_command_to_tokens(
+                        get_command()));
+        // free(command);
+        // free(parced_command);
+    }
     return 0;
 }
 
